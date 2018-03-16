@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1521189736 source:c:\msys2\projects\c++\cvticebtocbp\main.cpp
+	<iostream>
+	<fstream>
+	<sstream>
+	<string>
+	<set>
+	<vector>
+	<unordered_map>
+
