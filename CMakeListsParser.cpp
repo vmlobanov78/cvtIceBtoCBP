@@ -1,11 +1,11 @@
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
-#include <dirent.h>
-#include <unistd.h>
+#include <filesystem>
 #include "CMakeListsParser.h"
 #include "pathUtil.h"
 
+namespace fs = std::filesystem;
 
 const char* _CMakeLists_txt = "CMakeLists.txt";
 
@@ -43,52 +43,17 @@ string _exec_cmd (const string& _cmd)
 vector<string> _list_dir (const string& _dir, const string& _mask)
 {
 	vector<string> _list;
-	//cout << "	dbg: _list_dir" << endl;
 
-	char* _cd = getcwd(nullptr, 0);
-	//cout << "	dbg: chdir " << _dir << endl;
-	if(chdir(_dir.c_str()));
+	fs::path p_dir {_dir};
+	//p_dir /= _mask;
+	cout << "DBG " << p_dir.string() << endl;
 
-	char _tmp_name[L_tmpnam];
-	//mkstemp();
-	if (tmpnam(_tmp_name) )
+	for (auto& p: fs::directory_iterator(p_dir))
 	{
-		//cout << "	dbg: " << _tmp_name << endl;
-		string _cmd;
-		_cmd += "dir ";
-		_cmd += _mask;
-		_cmd += " >";
-		_cmd += _tmp_name;
-		//cout << "	dbg: EXEC " << _cmd << endl;
-		//_cmd += " || popd";
-		if(system(_cmd.c_str())==0)
-		{
-			ifstream _tmp_f(_tmp_name);
-			if(_tmp_f.is_open())
-			{
-				while(!_tmp_f.eof())
-				{
-					string _line;
-					_tmp_f >> _line;
-					if(_line.empty())
-						continue;
-					_list.push_back(_line);
-					//cout << "		dbg: push_back " << _line << endl;
-				}
-			} // _tmp_f.is_open()
-			else
-			{
-				//cout << "	err: BAD!! ifstream(" << _tmp_name << ") don't opened!" << endl;
-			}
-		}
-		else
-		{
-			//cout << "	err: BAD!! system(" << _cmd << ")" << endl;
-		}
+		string fn = p.path().filename().string();
+		cout << "	" << fn << endl;
+		_list.push_back(fn);
 	}
-
-	if(chdir(_cd));
-	free(_cd);
 
 	return _list;
 }
@@ -418,7 +383,8 @@ int _ADD_EXECUTABLE (_Parser& Self, Params& _params)
 
 int _ADD_LIBRARY (_Parser& Self, Params& _params)
 {
-    if (_params.size()>2)
+	cout << __FUNCTION__ << " params: " << _params.size() <<  endl;
+    if (_params.size()>1)
     {
         string _target_name = _params.front();
         _params.pop_front();
@@ -437,6 +403,7 @@ int _ADD_LIBRARY (_Parser& Self, Params& _params)
 		}
 
         //_stack.set(var_name, _params);
+        cout << "	add target " << _target_name << " build path: " << _buildPath << endl;
         cbTarget& _target = Self.prj.add_target(_target_name, _buildPath);
 		_target.type = _target_type;
 
@@ -704,10 +671,10 @@ void _Parser::_build (const string& _path_prj, const string& _path)
                     cerr << "warn: var '"<< it.st << "' - not defined!" << endl;
 
                 vector<string> val = _stack.get(it.st);
-                cout << "	";
+                //cout << "	";
                 //for(auto _str : val)
 				//	cout << _str << ' ';
-				cout << endl;
+				//cout << endl;
                 _params.insert(_params.end(), val.begin(), val.end());
                 lvl = 5;
             }

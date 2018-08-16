@@ -6,6 +6,7 @@
 
 using namespace std;
 
+const char PATH_SEPARATOR = '\\';
 inline bool _IS_sep (char ch) { return ch == '/' || ch == '\\'; }
 
 struct path
@@ -29,11 +30,11 @@ private:
 
 };
 
-struct path::iterator
+/*struct path::iterator
 {
 private:
 	path& _M_base;
-};
+};*/
 
 vector<string> _disunion (const string& value);
 
@@ -42,6 +43,16 @@ string _path_remove_curpath (const string& path);
 string _path_get_filename (const string& path);
 
 string _path_merge (const string& path1, const string& path2);
+string _path_merge (const string& path1, const string& path2, const string& path3);
+string _path_merge (const string& path1
+					, const string& path2
+					, const string& path3
+					, const string& path4);
+string _path_merge (const string& path1
+					, const string& path2
+					, const string& path3
+					, const string& path4
+					, const string& path5);
 
 
 #endif // PATHUTIL_H_INCLUDED

@@ -29,9 +29,13 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-std=c++1z" />
 			<Add option="-std=c++17" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Linker>
+			<Add library="stdc++fs" />
+		</Linker>
 		<Unit filename="CMakeListsParser.cpp" />
 		<Unit filename="CMakeListsParser.h" />
 		<Unit filename="Context.cpp" />

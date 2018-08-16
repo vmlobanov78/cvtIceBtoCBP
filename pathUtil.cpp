@@ -50,10 +50,37 @@ string _path_merge (const string& path1, const string& path2)
 
 	if(!res1.empty() && !res2.empty())
 	{
-		res1 += '/';
+		res1 += PATH_SEPARATOR;
 	}
 
 	return res1+res2;
 }
 
+string _path_merge (const string& path1
+					, const string& path2
+					, const string& path3
+					)
+{
+	return _path_merge(_path_merge(path1, path2), path3);
+}
+
+
+string _path_merge (const string& path1
+					, const string& path2
+					, const string& path3
+					, const string& path4
+					)
+{
+	return _path_merge(_path_merge(path1, path2), _path_merge(path3, path4));
+}
+
+string _path_merge (const string& path1
+					, const string& path2
+					, const string& path3
+					, const string& path4
+					, const string& path5
+					)
+{
+	return _path_merge(_path_merge(path1, path2, path3), _path_merge(path4, path5));
+}
 
