@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+//#include <sstream>
 #include <cstdlib>
 #include <filesystem>
 #include "CMakeListsParser.h"
@@ -12,6 +13,11 @@ const char* _CMakeLists_txt = "CMakeLists.txt";
 string _exec_cmd (const string& _cmd)
 {
 	char _tmp_name[L_tmpnam];
+	constexpr size_t _buffer_size = 512;
+	char _buffer[_buffer_size+4];
+
+	string result;
+
 	//mkstemp();
 	if (tmpnam(_tmp_name) )
 	{
@@ -19,25 +25,30 @@ string _exec_cmd (const string& _cmd)
 		if(system(_cmd2.c_str())==0)
 		{
 			FILE *_tmp_f = fopen(_tmp_name, "r");
-			if(_tmp_f)
+			if(_tmp_f != nullptr)
 			{
-				fseek(_tmp_f, 0, SEEK_END);
-				auto _size = ftell(_tmp_f);
-				string _str;
-				_str.resize(_size);
+				// fseek(_tmp_f, 0, SEEK_END);
+				// auto _size = ftell(_tmp_f);
+				// string _str;
+				// _str.resize(_size);
 
-				fseek(_tmp_f, 0, SEEK_SET);
-				if (fread(_str.data(), _size, 1, _tmp_f));
+				// fseek(_tmp_f, 0, SEEK_SET);
+				size_t sz_read = 0;
+				while ((sz_read = fread(_buffer, 1, _buffer_size, _tmp_f)) != 0)
+                {
+                    _buffer[sz_read] = 0;
+                    result.append(_buffer);
+                }
+				//if (fread(_str.data(), _size, 1, _tmp_f));
 
 				fclose(_tmp_f);
 
-				cout << "		DBG " << _cmd << " -> " << _str << endl;
+				cout << "		DBG " << _cmd << " -> " << result << endl;
 
-				return _str;
 			}
 		}
 	}
-	return string();
+	return result;
 }
 
 vector<string> _list_dir (const string& _dir, const string& _mask)
